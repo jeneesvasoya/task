@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="taskModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="city">
+    <Key>
+      <PropertyRef Name="city_id" />
+    </Key>
+    <Property Name="city_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="city_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="state_id" Type="Int32" />
+    <NavigationProperty Name="state" Relationship="Self.FK_city_state" FromRole="city" ToRole="state" />
+    <NavigationProperty Name="Employees" Relationship="Self.FK_Employee_city" FromRole="city" ToRole="Employee" />
+  </EntityType>
+  <EntityType Name="Employee">
+    <Key>
+      <PropertyRef Name="Emp_id" />
+    </Key>
+    <Property Name="Emp_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="Phone_No" Type="Int64" />
+    <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="state_id" Type="Int32" />
+    <Property Name="city_id" Type="Int32" />
+    <NavigationProperty Name="city" Relationship="Self.FK_Employee_city" FromRole="Employee" ToRole="city" />
+    <NavigationProperty Name="state" Relationship="Self.FK_Employee_state" FromRole="Employee" ToRole="state" />
+  </EntityType>
+  <EntityType Name="state">
+    <Key>
+      <PropertyRef Name="state_id" />
+    </Key>
+    <Property Name="state_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="state_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="cities" Relationship="Self.FK_city_state" FromRole="state" ToRole="city" />
+    <NavigationProperty Name="Employees" Relationship="Self.FK_Employee_state" FromRole="state" ToRole="Employee" />
+  </EntityType>
+  <Association Name="FK_city_state">
+    <End Role="state" Type="Self.state" Multiplicity="0..1" />
+    <End Role="city" Type="Self.city" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="state">
+        <PropertyRef Name="state_id" />
+      </Principal>
+      <Dependent Role="city">
+        <PropertyRef Name="state_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Employee_city">
+    <End Role="city" Type="Self.city" Multiplicity="0..1" />
+    <End Role="Employee" Type="Self.Employee" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="city">
+        <PropertyRef Name="city_id" />
+      </Principal>
+      <Dependent Role="Employee">
+        <PropertyRef Name="city_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Employee_state">
+    <End Role="state" Type="Self.state" Multiplicity="0..1" />
+    <End Role="Employee" Type="Self.Employee" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="state">
+        <PropertyRef Name="state_id" />
+      </Principal>
+      <Dependent Role="Employee">
+        <PropertyRef Name="state_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="taskEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="cities" EntityType="Self.city" />
+    <EntitySet Name="Employees" EntityType="Self.Employee" />
+    <EntitySet Name="states" EntityType="Self.state" />
+    <AssociationSet Name="FK_city_state" Association="Self.FK_city_state">
+      <End Role="state" EntitySet="states" />
+      <End Role="city" EntitySet="cities" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Employee_city" Association="Self.FK_Employee_city">
+      <End Role="city" EntitySet="cities" />
+      <End Role="Employee" EntitySet="Employees" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Employee_state" Association="Self.FK_Employee_state">
+      <End Role="state" EntitySet="states" />
+      <End Role="Employee" EntitySet="Employees" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
